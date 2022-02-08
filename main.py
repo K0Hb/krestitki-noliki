@@ -42,35 +42,28 @@ def draw_tic_tac_toe(scr: pygame.Surface, itmes: List) -> None:
                     3)
 
 
-def check_horizont(fd: List, symbol: str) -> bool:
-    """Проверка на условия победы по горизонтали"""
-    for i in range(LENGTH):
-        count = 0
-        check_symbol = None
-        for j in range(LENGTH):
-            if check_symbol != fd[i][j]:
-                check_symbol = fd[i][j]
-                count = 0
-            elif check_symbol == fd[i][j]:
-                count += 1
-                if count == QUANITY_CHARS - 1 and check_symbol == symbol:
-                    return True
-    return False
+def change_i_j(x: int, i: int, j: int, vertical: bool = False) -> Tuple:
+    '''Изменение координат в соответсвии проверочной оси'''
+    if vertical:
+        i = x
+        return i, j
+    j = x
+    return i, j
 
 
-def check_vertical(fd: List, symbol: str) -> bool:
-    """Проверка на условия победы по вертикали"""
-    for i in range(LENGTH):
-        count = 0
-        check_symbol = None
-        for j in range(LENGTH):
-            if check_symbol != fd[j][i]:
-                check_symbol = fd[j][i]
-                count = 0
-            elif check_symbol == fd[j][i]:
-                count += 1
-                if count == QUANITY_CHARS - 1 and check_symbol == symbol:
-                    return True
+def check_hrznt_vrtcl(fd: List, symbol: str, i: int, j: int, vertical=False) -> bool:
+    """Проверка на условия победы по горизонтали и вертикали"""
+    count = 0
+    check_symbol = None
+    for x in range(LENGTH):
+        i, j = change_i_j(x, i, j, vertical)
+        if check_symbol != fd[i][j]:
+            check_symbol = fd[i][j]
+            count = 0
+        elif check_symbol == fd[i][j]:
+            count += 1
+            if count == QUANITY_CHARS - 1 and check_symbol == symbol:
+                return True
     return False
 
 
@@ -135,8 +128,8 @@ def check_loss_side_diagonal(fd: List, i: int, j: int) -> bool:
 def get_win_check(fd: list, symbol: str, i_j: Tuple = None) -> bool:
     '''Поочердная проверка осей на условия победы'''
     i, j = i_j[0], i_j[1]
-    horizont = check_horizont(fd, symbol)
-    vertical = check_vertical(fd, symbol)
+    horizont = check_hrznt_vrtcl(fd, symbol, i, j)
+    vertical = check_hrznt_vrtcl(fd, symbol, i, j, True)
     diagonal1 = check_loss_main_diagonal(fd, i, j)
     diagonal2 = check_loss_side_diagonal(fd, i, j)
 
